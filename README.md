@@ -131,9 +131,11 @@ Las existencias salen solo del log del almacén: la Caja no las descuenta al ven
 
 ## Acceso con contraseña
 
-**Módulo de Pagos**, **Módulo de Almacén** y **Gestión de Productos** piden la misma contraseña. Se cambia en `app.js` → `ACCESS_PASSWORDS` y `PRODUCT_ADMIN_PASSWORD`.
+**Módulo de Pagos**, **Módulo de Almacén**, **Gestión de Productos** y la gestión de empleados piden la misma contraseña de acceso. Es distinta a la de Aguila Motors.
 
-> Es una web estática: la contraseña evita miradas casuales, pero no es seguridad real. Quien sepa abrir el código fuente puede leerla.
+En el código no está la contraseña, solo su huella SHA-256 (`app.js` → `ACCESS_PASSWORD_SHA256`), igual que la del encargado. Para cambiarla, calcula la huella de la nueva (`echo -n "NuevaContraseña" | sha256sum`) y sustitúyela. Las pestañas que la piden están en `PROTECTED_TABS`.
+
+> Es una web estática: la huella impide que alguien lea la contraseña en el código, pero no es seguridad real. Una contraseña corta o fácil se podría adivinar probando, y quien sepa programar puede saltarse la comprobación en su propio navegador.
 
 ## Datos compartidos (empleados y productos)
 
@@ -213,6 +215,10 @@ No necesita servidor ni dependencias: es HTML, CSS y JavaScript puros.
 Al publicar un cambio, sube el número de versión en `index.html`: el pie de página y el `?v=` de `styles.css` y `app.js`. Así los navegadores cargan la versión nueva sin Ctrl+F5.
 
 ## Bitácora de cambios
+
+### Versión 3 · 12 de octubre de 2026
+- Contraseñas nuevas, propias de Top Secret (ya no son las de Aguila Motors): una de acceso (Pagos, Almacén, Productos y empleados) y otra del encargado.
+- La contraseña de acceso ya no está escrita en el código: solo se guarda su huella SHA-256, como la del encargado.
 
 ### Versión 2 · 12 de octubre de 2026
 - Empleado de la semana: ahora se etiqueta el rol de Discord (`<@&1260611794049961995>`) en vez del 🏆.

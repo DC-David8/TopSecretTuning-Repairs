@@ -256,7 +256,7 @@ function setupCopyFallbackModal() {
   }
 }
 
-function showAccessModal({ sectionLabel, requiredPassword }) {
+function showAccessModal({ sectionLabel }) {
   const dlg = byId("access-modal");
   const titleEl = byId("access-title");
   const input = byId("access-pass");
@@ -267,7 +267,8 @@ function showAccessModal({ sectionLabel, requiredPassword }) {
 
   if (!dlg || !titleEl || !input || !errEl || !btnEnter || !btnCancel || !btnToggle) {
     const pass = window.prompt("Introduce la contrasena:");
-    return Promise.resolve(pass === requiredPassword);
+    const ok = unlockAccess(pass);
+    return Promise.resolve(ok);
   }
 
   titleEl.textContent = sectionLabel ? `Acceso: ${sectionLabel}` : "Acceso restringido";
@@ -279,7 +280,7 @@ function showAccessModal({ sectionLabel, requiredPassword }) {
   return new Promise((resolve) => {
     const onOk = () => {
       const pass = String(input.value || "");
-      if (pass !== String(requiredPassword || "")) {
+      if (!unlockAccess(pass)) {
         errEl.textContent = "Contrasena incorrecta.";
         input.focus();
         input.select();
@@ -348,11 +349,10 @@ function setupTabs() {
   tabs.forEach((tab) => {
     tab.addEventListener("click", async () => {
       const target = tab.dataset.tabTarget;
-      const required = ACCESS_PASSWORDS[target];
+      const required = PROTECTED_TABS.includes(target);
       if (required && !unlocked.has(target)) {
         const ok = await showAccessModal({
           sectionLabel: tab.textContent?.trim() || "Acceso restringido",
-          requiredPassword: required,
         });
         if (!ok) return;
         unlocked.add(target);
@@ -585,7 +585,6 @@ function fullName(e) {
 // Productos gestionados desde la app ("Gestión de Productos")
 // ============================================================================
 
-const PRODUCT_ADMIN_PASSWORD = "DCAguilaMotors1992$";
 const CUSTOM_PRODUCTS_STORAGE_KEY = "topsecret_custom_products_v1";
 // Ajustes sobre productos FIJOS (del codigo): precio/imagen personalizados y
 // si esta oculto del catalogo. El nombre y la categoria de un fijo no cambian.
@@ -629,7 +628,7 @@ function saveProductOverridesLocal(map) {
 }
 
 function addCustomProduct(payload, password) {
-  if (String(password || "") !== String(PRODUCT_ADMIN_PASSWORD || "")) {
+  if (!isAccessPassword(password)) {
     throw new Error("Contrasena incorrecta");
   }
   const current = loadCustomProductsLocal();
@@ -639,7 +638,7 @@ function addCustomProduct(payload, password) {
 }
 
 function updateCustomProduct(id, payload, password) {
-  if (String(password || "") !== String(PRODUCT_ADMIN_PASSWORD || "")) {
+  if (!isAccessPassword(password)) {
     throw new Error("Contrasena incorrecta");
   }
   const current = loadCustomProductsLocal();
@@ -651,7 +650,7 @@ function updateCustomProduct(id, payload, password) {
 }
 
 function deleteCustomProduct(id, password) {
-  if (String(password || "") !== String(PRODUCT_ADMIN_PASSWORD || "")) {
+  if (!isAccessPassword(password)) {
     throw new Error("Contrasena incorrecta");
   }
   const current = loadCustomProductsLocal();
@@ -660,7 +659,7 @@ function deleteCustomProduct(id, password) {
 }
 
 function setFixedProductOverride(originalName, patch, password) {
-  if (String(password || "") !== String(PRODUCT_ADMIN_PASSWORD || "")) {
+  if (!isAccessPassword(password)) {
     throw new Error("Contrasena incorrecta");
   }
   const key = normalizeKeySimple(originalName);
@@ -777,16 +776,33 @@ function getProductIcon(product) {
 // Empleados
 // ============================================================================
 
-const ACCESS_PASSWORDS = {
-  "tab-conta": "DCAguilaMotors1992$",
-  "tab-almacen": "DCAguilaMotors1992$",
-};
+// Pestanas que piden la contrasena de acceso (Pagos y Almacen; tambien la piden
+// Gestion de Productos y la gestion de empleados). En el codigo solo esta su
+// huella SHA-256, no la contrasena. Para cambiarla, ver el README.
+const PROTECTED_TABS = ["tab-conta", "tab-almacen"];
+const ACCESS_PASSWORD_SHA256 = "dbfb799d61da3d70e638c939b929b452a420892067f2510256e61bce06d27c99";
+
+// Contrasena escrita al desbloquear, para las acciones internas que la piden.
+let unlockedAccessPassword = "";
+
+function isAccessPassword(pass) {
+  return !!pass && sha256Hex(String(pass)) === ACCESS_PASSWORD_SHA256;
+}
+
+function unlockAccess(pass) {
+  if (!isAccessPassword(pass)) return false;
+  unlockedAccessPassword = String(pass);
+  return true;
+}
+
+function accessPassword() {
+  return unlockedAccessPassword;
+}
 
 // El programa de escritorio (.exe) recibe su propia clave al guardar empleados.
 // Se mantiene la antigua para que siga funcionando; la nueva se valida aqui.
 const BACKEND_LEGACY_PASSWORD = "0000";
 
-const EMPLOYEE_ADMIN_PASSWORD = ACCESS_PASSWORDS["tab-conta"];
 
 // Rol de Discord "Empleado de la semana". Al pegarlo en Discord, <@&ID> se ve
 // como la etiqueta del rol. Para cambiar de rol, cambia solo el numero.
@@ -925,7 +941,7 @@ function setEmployeeNoPay(fullNameStr, noPay) {
 const SHARED_DATA_FILE = "datos.js";
 const SHARED_DATA_LIVE_URL = "https://dc-david8.github.io/TopSecretTuning-Repairs/" + SHARED_DATA_FILE;
 // Huella SHA-256 de la contrasena del encargado (la contrasena no esta en el codigo).
-const EDITOR_PASSWORD_SHA256 = "6cd247cdd58ad88f2bf53d07ed2845c17375143c377648c4b26a981d2f7906b8";
+const EDITOR_PASSWORD_SHA256 = "19a1e10d853ef5296a3eb135a35f4de1bef80aca9e6640cf45a861dde031e916";
 const EDITOR_STORAGE_KEY = "topsecret_editor_v1";
 
 let SHARED_DATA = null;
@@ -1113,12 +1129,12 @@ async function buildSharedDataFile() {
 // Copia lo publicado a esta PC (para el encargado en una PC nueva o en el programa de escritorio).
 async function importSharedIntoLocal() {
   const local = await listEmployees();
-  for (const e of local) await deleteEmployee(e.id, EMPLOYEE_ADMIN_PASSWORD);
+  for (const e of local) await deleteEmployee(e.id, accessPassword());
   saveEmployeeDiscordMap(SHARED_DATA.discord);
   saveEmployeeIbanMap(SHARED_DATA.iban);
   saveEmployeeNoPayMap(SHARED_DATA.noPay);
   for (const e of SHARED_DATA.employees) {
-    await addEmployee({ name: e.name, surname: e.surname, rank: e.rank }, EMPLOYEE_ADMIN_PASSWORD);
+    await addEmployee({ name: e.name, surname: e.surname, rank: e.rank }, accessPassword());
   }
   saveCustomProductsLocal(SHARED_DATA.customProducts);
   saveProductOverridesLocal(SHARED_DATA.productOverrides);
@@ -1259,7 +1275,7 @@ async function listEmployees() {
 }
 
 async function addEmployee(payload, password) {
-  if (String(password || "") !== String(EMPLOYEE_ADMIN_PASSWORD || "")) {
+  if (!isAccessPassword(password)) {
     throw new Error("Contrasena incorrecta");
   }
 
@@ -1276,7 +1292,7 @@ async function addEmployee(payload, password) {
 }
 
 async function updateEmployee(id, payload, password) {
-  if (String(password || "") !== String(EMPLOYEE_ADMIN_PASSWORD || "")) {
+  if (!isAccessPassword(password)) {
     throw new Error("Contrasena incorrecta");
   }
 
@@ -1319,7 +1335,7 @@ async function updateEmployee(id, payload, password) {
 }
 
 async function deleteEmployee(id, password) {
-  if (String(password || "") !== String(EMPLOYEE_ADMIN_PASSWORD || "")) {
+  if (!isAccessPassword(password)) {
     throw new Error("Contrasena incorrecta");
   }
 
@@ -1838,7 +1854,7 @@ function setupProductsAdminModal(onProductsChanged) {
         restoreBtn.type = "button";
         restoreBtn.textContent = "Restaurar";
         restoreBtn.addEventListener("click", () => {
-          setFixedProductHidden(row.name, false, PRODUCT_ADMIN_PASSWORD);
+          setFixedProductHidden(row.name, false, accessPassword());
           renderAdminTable();
           onProductsChanged?.();
         });
@@ -1858,8 +1874,8 @@ function setupProductsAdminModal(onProductsChanged) {
           const action = row.source === "fixed" ? "ocultar" : "quitar";
           if (!window.confirm(`¿Seguro que quieres ${action} "${row.name}"?`)) return;
           try {
-            if (row.source === "fixed") setFixedProductHidden(row.name, true, PRODUCT_ADMIN_PASSWORD);
-            else deleteCustomProduct(row.id, PRODUCT_ADMIN_PASSWORD);
+            if (row.source === "fixed") setFixedProductHidden(row.name, true, accessPassword());
+            else deleteCustomProduct(row.id, accessPassword());
           } catch (e) {
             alert(String(e?.message || e));
             return;
@@ -1910,7 +1926,6 @@ function setupProductsAdminModal(onProductsChanged) {
     }
     const ok = await showAccessModal({
       sectionLabel: "Gestión de Productos",
-      requiredPassword: PRODUCT_ADMIN_PASSWORD,
     });
     if (!ok) return;
     exitEditMode();
@@ -1941,14 +1956,14 @@ function setupProductsAdminModal(onProductsChanged) {
     try {
       if (!editingTarget) {
         const image = pendingImageDataUrl || generatePlaceholderIcon(name);
-        addCustomProduct({ name, price, image, category }, PRODUCT_ADMIN_PASSWORD);
+        addCustomProduct({ name, price, image, category }, accessPassword());
       } else if (editingTarget.source === "custom") {
         const image = pendingImageDataUrl || currentEditingImage;
-        updateCustomProduct(editingTarget.id, { name, price, image, category }, PRODUCT_ADMIN_PASSWORD);
+        updateCustomProduct(editingTarget.id, { name, price, image, category }, accessPassword());
       } else {
         const patch = { price };
         if (pendingImageDataUrl) patch.image = pendingImageDataUrl;
-        setFixedProductOverride(editingTarget.originalName, patch, PRODUCT_ADMIN_PASSWORD);
+        setFixedProductOverride(editingTarget.originalName, patch, accessPassword());
       }
     } catch (e) {
       if (errorEl) errorEl.textContent = String(e?.message || e);
@@ -2822,7 +2837,7 @@ function setupEmployeesAdminModal({ onChanged }) {
       setStatus("Escribe la contrasena.");
       return;
     }
-    if (p !== String(EMPLOYEE_ADMIN_PASSWORD || "")) {
+    if (!unlockAccess(p)) {
       unlocked = false;
       adminPass = "";
       setStatus("Contrasena incorrecta.");
