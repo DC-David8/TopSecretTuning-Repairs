@@ -564,15 +564,27 @@ const PRODUCTS = [
 ];
 
 const RANKS = [
-  { label: "Chalán", pct: 0.40 },
+  { label: "Recluta", pct: 0.40 },
   { label: "Mecánico", pct: 0.45 },
   { label: "Experimentado", pct: 0.50 },
   { label: "Subjefe", pct: 0.50 },
   { label: "Jefe", pct: 0.50 },
 ];
 
+// Rangos que cambiaron de nombre: los empleados guardados con el nombre viejo
+// pasan solos al nuevo (mismo porcentaje).
+const RANK_RENAMES = { "chalan": "Recluta" };
+
+function currentRankName(rank) {
+  return RANK_RENAMES[normalizeKeySimple(rank)] || rank;
+}
+
+function withCurrentRanks(list) {
+  return (list || []).map((e) => (e && e.rank ? { ...e, rank: currentRankName(e.rank) } : e));
+}
+
 function pctForRank(rank) {
-  const key = normalizeKeySimple(rank);
+  const key = normalizeKeySimple(currentRankName(rank));
   const found = RANKS.find((r) => normalizeKeySimple(r.label) === key);
   return found ? found.pct : 0;
 }
@@ -1261,17 +1273,17 @@ async function waitPyApi(maxMs = 2500) {
 }
 
 async function listEmployees() {
-  if (isSharedReadOnly()) return SHARED_DATA.employees.map((e) => ({ ...e }));
+  if (isSharedReadOnly()) return withCurrentRanks(SHARED_DATA.employees);
   const api = await waitPyApi();
   if (api && typeof api.emp_list === "function") {
     try {
       const data = await api.emp_list();
       const arr = Array.isArray(data) ? data : (Array.isArray(data?.employees) ? data.employees : []);
-      return arr;
+      return withCurrentRanks(arr);
     } catch {
     }
   }
-  return loadEmployeesLocal();
+  return withCurrentRanks(loadEmployeesLocal());
 }
 
 async function addEmployee(payload, password) {

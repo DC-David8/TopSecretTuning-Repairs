@@ -57,7 +57,7 @@ Los productos agregados desde Gestión de Productos usan su nombre completo. Las
 
 | Rango | Comisión |
 |---|---|
-| Chalán | 40 % |
+| Recluta | 40 % |
 | Mecánico | 45 % |
 | Experimentado | 50 % |
 | Subjefe | 50 % |
@@ -215,6 +215,9 @@ No necesita servidor ni dependencias: es HTML, CSS y JavaScript puros.
 Al publicar un cambio, sube el número de versión en `index.html`: el pie de página y el `?v=` de `styles.css` y `app.js`. Así los navegadores cargan la versión nueva sin Ctrl+F5.
 
 ## Bitácora de cambios
+
+### Versión 4 · 12 de octubre de 2026
+- El rango **Chalán** pasa a llamarse **Recluta** (sigue con el 40 %). Los empleados que ya estaban guardados como Chalán aparecen solos como Recluta.
 
 ### Versión 3 · 12 de octubre de 2026
 - Contraseñas nuevas, propias de Top Secret (ya no son las de Aguila Motors): una de acceso (Pagos, Almacén, Productos y empleados) y otra del encargado.
