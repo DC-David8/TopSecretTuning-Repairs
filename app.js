@@ -791,7 +791,7 @@ const EMPLOYEE_ADMIN_PASSWORD = ACCESS_PASSWORDS["tab-conta"];
 // Rol de Discord "Empleado de la semana". Al pegarlo en Discord, <@&ID> se ve
 // como la etiqueta del rol. Para cambiar de rol, cambia solo el numero.
 // Vacio = se usa el trofeo. Para usar un rol de Discord, pon aqui su ID.
-const EMPLOYEE_OF_WEEK_ROLE_ID = "";
+const EMPLOYEE_OF_WEEK_ROLE_ID = "1260611794049961995";
 const EMPLOYEE_OF_WEEK_TAG = EMPLOYEE_OF_WEEK_ROLE_ID ? `<@&${EMPLOYEE_OF_WEEK_ROLE_ID}>` : "🏆";
 
 // ID de Discord de cada empleado, para etiquetarlo (<@ID>) al copiar los totales.
@@ -1996,7 +1996,7 @@ const RE_BUYER = /^\s*Comprador:\s*(.+?)\s*$/i;
 const RE_KITS_QTY = /^\s*Cantidad:\s*`?(\d+)`?\s*$/i;
 
 // "Comercio:" de los recibos del datafono que son de este taller. Se compara sin
-// espacios, acentos ni mayusculas ("Top Secret", "TOP SECRET", "TopSecret"...).
+// espacios, acentos ni mayusculas. En el log sale "Top Secret: Tunings & Repairs".
 const COMERCIO_MATCH = "topsecret";
 function isOwnComercio(comercio) {
   return normalizeKeySimple(comercio).replace(/[^a-z0-9]/g, "").includes(COMERCIO_MATCH);
@@ -2130,10 +2130,11 @@ function processText(rawText) {
       if (m) { current.concept = stripWrap(m[1]); continue; }
       m = RE_DTF_COMERCIO.exec(line);
       if (m) { current.comercio = stripWrap(m[1]); continue; }
+      // El log a veces trae dos espacios entre nombre y apellido ("antonio  pulido").
       m = RE_DTF_COBRADOR.exec(line);
-      if (m) { current.issuer = stripWrap(m[1]); continue; }
+      if (m) { current.issuer = stripWrap(m[1]).replace(/\s+/g, " "); continue; }
       m = RE_DTF_CLIENTE.exec(line);
-      if (m) { current.recipient = stripWrap(m[1]); continue; }
+      if (m) { current.recipient = stripWrap(m[1]).replace(/\s+/g, " "); continue; }
       m = RE_DTF_AUT.exec(line);
       if (m) {
         current.aut = stripWrap(m[1]);

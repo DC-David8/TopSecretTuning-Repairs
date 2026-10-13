@@ -110,9 +110,9 @@ Sale resaltado cuando es la mitad o más. No aparece en el texto que se copia a 
 
 ### Empleado de la semana
 
-En **Totales empleados**, quien más cobra lleva un 🏆 al copiar (o la etiqueta de un rol de Discord *Empleado de la semana*, `<@&ID>`, si se configura), tanto en **Copiar seleccionado** como en **Copiar todo**. Si hay empate, la llevan todos los empatados. El texto solo menciona el rol: asignarlo se sigue haciendo en Discord.
+En **Totales empleados**, quien más cobra lleva la etiqueta del rol de Discord *Empleado de la semana* (`<@&1260611794049961995>`) al copiar, tanto en **Copiar seleccionado** como en **Copiar todo**. Si hay empate, la llevan todos los empatados. El texto solo menciona el rol: asignarlo se sigue haciendo en Discord.
 
-Para usar un rol en vez del trofeo, pon su ID en `app.js` → `EMPLOYEE_OF_WEEK_ROLE_ID` (ID del rol: con el modo desarrollador de Discord, clic derecho sobre el rol → *Copiar ID del rol*).
+Para cambiar de rol, pon su ID en `app.js` → `EMPLOYEE_OF_WEEK_ROLE_ID` (ID del rol: con el modo desarrollador de Discord, clic derecho sobre el rol → *Copiar ID del rol*). Si se deja vacío, vuelve a salir el 🏆.
 
 ## Almacén
 
@@ -213,6 +213,11 @@ No necesita servidor ni dependencias: es HTML, CSS y JavaScript puros.
 Al publicar un cambio, sube el número de versión en `index.html`: el pie de página y el `?v=` de `styles.css` y `app.js`. Así los navegadores cargan la versión nueva sin Ctrl+F5.
 
 ## Bitácora de cambios
+
+### Versión 2 · 12 de octubre de 2026
+- Empleado de la semana: ahora se etiqueta el rol de Discord (`<@&1260611794049961995>`) en vez del 🏆.
+- Datáfono: comprobado con recibos reales (Comercio «Top Secret: Tunings & Repairs», importes en €). El cobrador y el cliente se guardan sin espacios dobles («antonio  pulido» → «antonio pulido»).
+- Almacén: sigue contando todos los almacenes del log (el inventario está a cero por ahora).
 
 ### Versión 1 · 12 de octubre de 2026
 - Copia de la Caja de Aguila Motors (versión 17) para **Top Secret: Tuning & Repairs**: Caja con 131 productos, Pagos con comisiones, IBAN, No cobra y kits a sí mismo, Almacén, datos compartidos y vista para móvil.
