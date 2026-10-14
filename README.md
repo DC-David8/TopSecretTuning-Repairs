@@ -10,7 +10,7 @@ La versión que estás usando aparece al final de la página. Si no ves los últ
 
 ## Qué hace
 
-1. **Módulo de Caja** · Catálogo de 131 productos y servicios por pestañas. Se pulsa un producto para sumarlo al ticket (clic derecho para restar), se ajustan las cantidades y se copia el **total** o el **concepto** para pasarlo por el datáfono (máximo 40 caracteres, ver *Concepto para el datáfono*).
+1. **Módulo de Caja** · Catálogo de 112 productos y servicios por pestañas. Se pulsa un producto para sumarlo al ticket (clic derecho para restar), se ajustan las cantidades y se copia el **total** o el **concepto** para pasarlo por el datáfono (máximo 40 caracteres, ver *Concepto para el datáfono*).
 2. **Módulo de Pagos** · Se pega el texto de Discord con las facturas (datáfono TPV y el sistema de facturas antiguo) y las ventas de kits. Calcula el total cobrado por cada empleado, su comisión según el rango y el **Total a Pagar** a toda la plantilla. Se puede exportar a CSV.
 3. **Módulo de Almacén** · Se pega el log de inventario de Discord (METER / SACAR) y muestra las existencias, quién mete y quién saca cada artículo (con su Discord) y el historial completo. Avisa cuando un artículo baja del mínimo.
 
@@ -18,8 +18,8 @@ La versión que estás usando aparece al final de la página. Si no ves los últ
 
 | Pestaña | Contenido |
 |---|---|
-| Motos, Gama Baja, Gama Media, Gama Alta, Gama VIP, Camiones, Aéreos | 14 piezas de tuning por gama: pintura, neones, luces, ruedas, humo, carrocería, claxon, tintado, turbo, motor, transmisión, blindaje, suspensión y frenos |
-| Full Tuning | El Full Tuning de cada gama, de $10.000 a $50.000 |
+| Motos, Gama Baja, Gama Media, Gama Alta, Gama VIP, Camiones | 14 piezas de tuning por gama: pintura, neones, luces, ruedas, humo, carrocería, claxon, tintado, turbo, motor, transmisión, blindaje, suspensión y frenos |
+| Full Tuning | El Full Tuning de cada gama, de $10.000 a $40.000 |
 
 Los **Camiones** tienen los mismos precios que la Gama Alta, porque su precio de compra es parecido.
 | Servicios (Taller) / Servicios (Grúa) | Reparaciones, limpiezas y repostajes, dentro y fuera del taller. Los kits de reparación no están: se venden desde el menú de kits del juego y se cuentan en Pagos → Venta de Kits |
@@ -27,7 +27,6 @@ Los **Camiones** tienen los mismos precios que la Gama Alta, porque su precio de
 | Camaleónica | Pintura camaleónica y cambios de color |
 | Nitro | Instalación y botella. Venta restringida: la Caja muestra un aviso |
 | Neones RGB | Instalación (el mando está en Tienda) |
-| Compraventa | Cambio de papeles por gama |
 
 Desde **Gestión de Productos** (con contraseña) se pueden agregar productos nuevos con su icono, cambiar precios e imágenes y ocultar o restaurar los fijos.
 
@@ -41,14 +40,14 @@ El datáfono solo acepta **40 caracteres** de concepto. Debajo del total del tic
 
 | Abreviatura | Significa |
 |---|---|
-| MT, GB, GM, GA, VIP, CAM, AE | Motos, Gama Baja, Media, Alta, VIP, Camiones, Aéreos |
+| MT, GB, GM, GA, VIP, CAM | Motos, Gama Baja, Media, Alta, VIP, Camiones |
 | T / G | Taller / Grúa |
 | Pint, Neon, Luces, Rued, Humo, Carr, Clax, Tint | Pintura, Neones, Cambio de Luces, Ruedas, Humo de Ruedas, Carrocería, Claxon, Tintado de Lunas |
 | Turbo, Motor, Trans, Blind, Susp, Fren, FT | Turbo, Motor, Transmisión, Blindaje, Suspensión, Frenos, Full Tuning |
 | Rep, Limp, Gas, Grua | Reparación, Limpieza, Repostaje, Servicio de Grúa |
 | Desvuelco, Rueda, Mando RGB, Bayeta | Productos de la Tienda |
 | Camaleon, Color cam | Pintura Camaleónica, Cambio de Color Camaleónico |
-| Nitro, Bot nitro, Neon RGB, Compra | Instalación de Nitro, Botella de Nitro, Instalación de Neones RGB, Compraventa |
+| Nitro, Bot nitro, Neon RGB | Instalación de Nitro, Botella de Nitro, Instalación de Neones RGB |
 | `2x` delante | Cantidad (si es más de 1) |
 
 Los productos agregados desde Gestión de Productos usan su nombre completo. Las abreviaturas se cambian en `app.js` → `PIECE_SHORT`, `GAMA_SHORT` y `SERVICE_SHORT`.
@@ -206,7 +205,7 @@ No necesita servidor ni dependencias: es HTML, CSS y JavaScript puros.
 ## Personalizar
 
 - **Precios del tuning**: `app.js` → `TUNING_PRICES` (una fila por gama, en el orden de `TUNING_PIECES`).
-- **Servicios, camaleónica, nitro, neones y compraventa**: `app.js` → `SERVICE_PRODUCTS`.
+- **Servicios, camaleónica, nitro y neones**: `app.js` → `SERVICE_PRODUCTS`.
 - **Pestañas de la Caja**: `app.js` → `PRODUCT_CATEGORIES`.
 - **Artículos del almacén y sus mínimos**: `app.js` → `ALM_TRACKED`.
 - **Precio por kit** en Pagos: se cambia en la propia página (por defecto $800).
@@ -215,6 +214,9 @@ No necesita servidor ni dependencias: es HTML, CSS y JavaScript puros.
 Al publicar un cambio, sube el número de versión en `index.html`: el pie de página y el `?v=` de `styles.css` y `app.js`. Así los navegadores cargan la versión nueva sin Ctrl+F5.
 
 ## Bitácora de cambios
+
+### Versión 5 · 14 de octubre de 2026
+- Caja: se quitan las pestañas **Aéreos** y **Compraventa**, que este taller no ofrece. También salen el Full Tuning de Aéreos y el Cambio de Color Camaleónico (Aéreos). El catálogo queda en 112 productos.
 
 ### Versión 4 · 12 de octubre de 2026
 - El rango **Chalán** pasa a llamarse **Recluta** (sigue con el 40 %). Los empleados que ya estaban guardados como Chalán aparecen solos como Recluta.

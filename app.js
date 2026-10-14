@@ -373,7 +373,6 @@ const PRODUCT_CATEGORIES = [
   { key: "gama_alta", label: "Gama Alta" },
   { key: "gama_vip", label: "Gama VIP" },
   { key: "camiones", label: "Camiones" },
-  { key: "aereos", label: "Aéreos" },
   { key: "full_tuning", label: "Full Tuning" },
   { key: "servicios_taller", label: "Servicios (Taller)" },
   { key: "servicios_grua", label: "Servicios (Grúa)" },
@@ -381,7 +380,6 @@ const PRODUCT_CATEGORIES = [
   { key: "camaleonica", label: "Camaleónica" },
   { key: "nitro", label: "Nitro" },
   { key: "neones", label: "Neones RGB" },
-  { key: "compraventa", label: "Compraventa" },
   { key: "otros", label: "Otros" },
 ];
 
@@ -415,7 +413,6 @@ const GAMAS = [
   { key: "gama_alta", label: "Gama Alta" },
   { key: "gama_vip", label: "Gama VIP" },
   { key: "camiones", label: "Camiones" },
-  { key: "aereos", label: "Aéreos" },
 ];
 
 // Precio de cada pieza (mismo orden que TUNING_PIECES) por gama.
@@ -427,7 +424,6 @@ const TUNING_PRICES = {
   gama_vip:   [1550, 1550, 1550, 1550, 1550, 1150, 1500, 1500, 1600, 1600, 1600, 1600, 1600, 1600, 40000],
   // Camiones: mismos precios que Gama Alta (su precio de compra es parecido).
   camiones:   [1550, 1550, 1550, 1550, 1550, 1150, 1500, 1500, 1600, 1600, 1600, 1600, 1600, 1600, 40000],
-  aereos:     [5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 10000, 10000, 10000, 10000, 10000, 10000, 50000],
 };
 
 // Abreviaturas para el concepto del datafono (maximo 40 caracteres).
@@ -459,7 +455,6 @@ const GAMA_SHORT = {
   gama_alta: "GA",
   gama_vip: "VIP",
   camiones: "CAM",
-  aereos: "AE",
 };
 
 // [abreviatura, grupo]: el grupo (gama o T = taller, G = grua) se escribe una sola vez al final.
@@ -482,14 +477,10 @@ const SERVICE_SHORT = {
   "Bayetas": ["Bayeta", ""],
   "Pintura Camaleónica (primera vez)": ["Camaleon", ""],
   "Cambio de Color Camaleónico": ["Color cam", ""],
-  "Cambio de Color Camaleónico (Aéreos)": ["Color cam", "AE"],
   "Instalación de Nitro ⚠": ["Nitro", ""],
   "Botella de Nitro": ["Bot nitro", ""],
   "Instalación de Neones RGB": ["Neon RGB", ""],
   "Mando de Neones RGB": ["Mando RGB", ""],
-  "Compraventa Gama Baja": ["Compra", "GB"],
-  "Compraventa Gama Media": ["Compra", "GM"],
-  "Compraventa Gama Alta": ["Compra", "GA"],
 };
 
 function buildTuningProducts() {
@@ -540,7 +531,6 @@ const SERVICE_PRODUCTS = [
   // Pintura camaleonica
   { name: "Pintura Camaleónica (primera vez)", price: 20000, category: "camaleonica" },
   { name: "Cambio de Color Camaleónico", price: 5000, category: "camaleonica" },
-  { name: "Cambio de Color Camaleónico (Aéreos)", price: 10000, category: "camaleonica" },
 
   // Nitro (venta restringida, revisar al cliente)
   { name: "Instalación de Nitro ⚠", price: 35000, category: "nitro" },
@@ -548,11 +538,6 @@ const SERVICE_PRODUCTS = [
 
   // Neones RGB
   { name: "Instalación de Neones RGB", price: 10000, category: "neones" },
-
-  // Compraventa (cambio de papeles)
-  { name: "Compraventa Gama Baja", price: 2500, category: "compraventa" },
-  { name: "Compraventa Gama Media", price: 5000, category: "compraventa" },
-  { name: "Compraventa Gama Alta", price: 10000, category: "compraventa" },
 ];
 
 const PRODUCTS = [
